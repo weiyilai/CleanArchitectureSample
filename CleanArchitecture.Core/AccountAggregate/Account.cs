@@ -1,12 +1,10 @@
 ﻿using CleanArchitecture.Core.AccountAggregate.Events;
 using CleanArchitecture.SharedKernel;
-using System.Runtime.CompilerServices;
 
 namespace CleanArchitecture.Core.AccountAggregate;
 
 public class Account : EntityBase
 {
-
     public string Name { get; set; } = string.Empty;
 
     public string Email { get; set; } = string.Empty;
@@ -27,7 +25,7 @@ public class Account : EntityBase
 
     public override string ToString()
     {
-        string status = IsDone ? "Is Created!" : "Not Createxd.";
+        string status = IsDone ? "Is Created!" : "Not Created.";
         return $"{Id}: Status: {status} - {Name} - {Email}";
     }
 }

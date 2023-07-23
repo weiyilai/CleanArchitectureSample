@@ -1,6 +1,7 @@
 ﻿using CleanArchitecture.Core.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Net.Mail;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace CleanArchitecture.Infrastructure;
 
@@ -16,24 +17,37 @@ public class SmtpEmailService : IEmailService
     }
 
     public async Task SendAsync(
-        string to, 
         string from, 
+        string to, 
         string subject, 
         string body
         )
     {
-        using SmtpClient emailClient = new("localhost");
-        using MailMessage message = new();
-        message.From = new MailAddress(from);
-        message.Subject = subject;
-        message.Body = body;
-        message.To.Add(new MailAddress(to));
-        await emailClient.SendMailAsync(message);
-        _logger.LogWarning(
-            "Sending email to {to} from {from} with subject {subject}.", 
-            to, 
-            from, 
-            subject
-            );
+        string? apiKey = Environment.GetEnvironmentVariable("SendGrid_Api_Key");
+        string plainTextContent = subject;
+        string htmlContent = $"<strong>{body}</strong>";
+        SendGridClient emailClient = new(apiKey);
+        EmailAddress fromEmail = new(from, "Admin");
+        EmailAddress toEmail = new(to);
+        SendGridMessage msg = 
+            MailHelper.CreateSingleEmail(
+                fromEmail,
+                toEmail, 
+                subject, 
+                plainTextContent, 
+                htmlContent
+                );
+        var response = await emailClient.SendEmailAsync(msg);
+        if (response != null && 
+            response.IsSuccessStatusCode
+            )
+        {
+            _logger.LogWarning(
+                "Sending email to {to} from {from} with subject {subject}.",
+                to,
+                from,
+                subject
+                );
+        }
     }
 }

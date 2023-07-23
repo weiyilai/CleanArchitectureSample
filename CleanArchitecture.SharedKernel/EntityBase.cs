@@ -7,7 +7,10 @@ namespace CleanArchitecture.SharedKernel;
 /// </summary>
 public abstract class EntityBase
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// Guid
+    /// </summary>
+    public string Id { get; set; }
 
     private List<DomainEventBase> _domainEvents = new();
 

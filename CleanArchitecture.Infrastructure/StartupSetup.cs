@@ -1,4 +1,5 @@
-﻿using CleanArchitecture.Infrastructure.Data;
+﻿using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,4 +13,12 @@ public static class StartupSetup
         ) =>
       services.AddDbContext<AppDbContext>(options =>
           options.UseSqlite(connectionString)); // will be created in web project root
+      
+    public static IServiceCollection AddInfrastructureService(
+        this IServiceCollection services)
+    {
+        services.AddTransient<IEmailService, SmtpEmailService>();
+
+        return services;
+    }
 }
